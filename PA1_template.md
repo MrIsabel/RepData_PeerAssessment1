@@ -10,7 +10,8 @@ output:
 
 **Load and format data**
 
-```{r}
+
+```r
 tmp <- tempfile()
 tmp2 <- tempfile()
 url <- "https://github.com/MrIsabel/RepData_PeerAssessment1/raw/master/activity.zip"
@@ -26,25 +27,30 @@ activity$date <- as.Date(activity$date, format = "%Y-%m-%d")
 
 **Calculate the total number of steps taken per day and draw histogram**
 
-```{r histogram 1}
+
+```r
 totalstepsday <- aggregate(activity$steps, list(activity$date), sum)
 colnames(totalstepsday) <- c("day", "sumsteps")
 hist(totalstepsday$sumsteps, xlab = "Number of Steps", main = "Histogram of Total Number Steps Taken per Day")
 ```
 
+![](PA1_template_files/figure-html/histogram 1-1.png)<!-- -->
+
 **Calculate the mean and median of the number of steps taken per day**
 
-```{r}
+
+```r
 meansteps <- format(round(mean(totalstepsday$sumsteps,  na.rm = TRUE), digits = 2), scientific = FALSE)
 
 mediansteps <- median(totalstepsday$sumstep, na.rm = TRUE)
 ```
 
-The mean of the total number of steps taken per day is `r meansteps` and the median is `r mediansteps`.
+The mean of the total number of steps taken per day is 10766.19 and the median is 10765.
 
 **Calculate the mean of the number of steps taken per 5-minute interval and draw graph**
 
-```{r plot 1}
+
+```r
 meanstepsint <- aggregate(activity$steps, list(activity$interval), mean, na.rm = TRUE)
 colnames(meanstepsint) <- c("interval", "meansteps")
 meanstepsint$meansteps <- round(meanstepsint$meansteps, digits = 2)
@@ -52,26 +58,31 @@ meanstepsint$meansteps <- round(meanstepsint$meansteps, digits = 2)
 plot(meanstepsint, type = "l", xlab = "5-Minute Interval", ylab = "Number of Steps", main = "Mean of the Number of Steps Taken per 5-Minute Interval")
 ```
 
+![](PA1_template_files/figure-html/plot 1-1.png)<!-- -->
+
 **Find maximum average number of steps per 5-minute interval**
 
-```{r}
+
+```r
 maxsteps <- max(meanstepsint$meansteps, na.rm = TRUE)
 maxint <- meanstepsint[meanstepsint$meansteps == maxsteps, 1]
 ```
 
-The maximum average of number of steps per 5-minute interval is `r maxsteps` located in the `r maxint` interval.
+The maximum average of number of steps per 5-minute interval is 206.17 located in the 835 interval.
 
 **Calculate the number of NA values**
 
-```{r}
+
+```r
 totalna <- sum(is.na(activity$steps))
 ```
 
-The total NA values is `r totalna`.
+The total NA values is 2304.
 
 **Impute NA values with the average number of steps taken per 5-minute interval and draw new histogram**
 
-```{r histogram 2}
+
+```r
 newactivity <- activity
 k <- dim(newactivity)[1]
 
@@ -89,19 +100,23 @@ colnames(newtotalstepsday) <- c("day", "sumsteps")
 hist(newtotalstepsday$sumsteps, xlab = "Number of Steps", main = "Histogram of Total Number Steps Taken per Day")
 ```
 
+![](PA1_template_files/figure-html/histogram 2-1.png)<!-- -->
+
 **Calculate the mean and median number of steps taken per day with the imputed data**
 
-```{r}
+
+```r
 newmeansteps <- format(mean(newtotalstepsday$sumsteps,  na.rm = TRUE), scientific = FALSE)
 
 newmediansteps <- format(median(newtotalstepsday$sumstep, na.rm = TRUE), scientific = FALSE)
 ```
 
-The mean of the total number of steps taken per day is `r newmeansteps` and the median is `r newmediansteps`. There are only small change with the method chosen for imputing NA values.
+The mean of the total number of steps taken per day is 10766.18 and the median is 10766.13. There are only small change with the method chosen for imputing NA values.
 
 **Calculate the mean of the number of steps taken per 5-minute interval and separate the data by weekend and weekday and draw graph**
 
-```{r plot 2}
+
+```r
 library(lattice)
 
 for (j in 1:k){
@@ -121,3 +136,5 @@ weektotalstepsday$meansteps <- round(weektotalstepsday$meansteps, digits = 2)
 
 xyplot(meansteps~interval|week, data = weektotalstepsday, type = "l", layout = c(1,2), ylim = c(0,250), ylab = "Number of Steps", xlab = "5-Minute Interval", main = "Mean of the Number of Steps Taken per 5-Minute Interval divided by weekend and weekday")
 ```
+
+![](PA1_template_files/figure-html/plot 2-1.png)<!-- -->
